@@ -1,5 +1,8 @@
 from django.contrib import admin
 
-from .models import Tournament
+from .models import Tournament, Phase
 
-admin.site.register(Tournament)
+admin.site.register([
+    Tournament,
+    Phase,
+])

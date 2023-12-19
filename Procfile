@@ -1,1 +1,1 @@
-web: gunicorn 'hahimur_backend.wsgi'
+web: python manage.py migrate && gunicorn 'hahimur_backend.wsgi'
