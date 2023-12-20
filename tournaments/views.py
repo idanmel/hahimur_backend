@@ -1,7 +1,13 @@
-from django.shortcuts import render
-from django.http import HttpResponse
+from django.views import View
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from .serializers import TournamentSerializer
+from .models import Tournament
 
 
-def index(request):
-    return HttpResponse("Hello, world. You're at the polls index.")
-
+class TournamentView(APIView):
+    def get(self, request, format=None):
+        ts = Tournament.objects.all()
+        serializer = TournamentSerializer(ts, many=True)
+        return Response({"data": serializer.data})
