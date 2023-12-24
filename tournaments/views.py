@@ -14,7 +14,7 @@ class TournamentView(APIView):
     
 
 class MatchesView(APIView):
-    def get(self, request, tournament_id,format=None):
+    def get(self, request, tournament_id, format=None):
         matches = Match.objects.filter(phase__tournament_id=tournament_id)
         serializer = MatchSerializer(matches, many=True)
         return Response({"data": serializer.data})
