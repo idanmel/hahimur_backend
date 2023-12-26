@@ -1,13 +1,13 @@
-from django.views import View
+import json
+
 from django.http import HttpResponse
+from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .serializers import TournamentSerializer, MatchSerializer
-from .models import Tournament, Match
-
-import json
+from .models import Match, Tournament
+from .serializers import MatchSerializer, TournamentSerializer
 
 
 class HttpUnprocessableEntity(HttpResponse):
@@ -19,7 +19,7 @@ class TournamentView(APIView):
         ts = Tournament.objects.all()
         serializer = TournamentSerializer(ts, many=True)
         return Response({"data": serializer.data})
-    
+
 
 class MatchesView(APIView):
     def get(self, request, tournament_id, format=None):
@@ -27,12 +27,12 @@ class MatchesView(APIView):
         serializer = MatchSerializer(matches, many=True)
         return Response({"data": serializer.data})
 
-class LoginView(View):
 
+class LoginView(View):
     @csrf_exempt
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
-    
+
     def post(self, request):
         j = json.loads(request.body)
         if not j.get("token"):
