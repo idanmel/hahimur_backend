@@ -1,12 +1,13 @@
 import json
 
-from django.http import HttpResponse
+from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponse, JsonResponse
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Match, Tournament
+from .models import Match, Token, Tournament
 from .serializers import MatchSerializer, TournamentSerializer
 
 
@@ -34,7 +35,13 @@ class LoginView(View):
         return super().dispatch(*args, **kwargs)
 
     def post(self, request):
-        j = json.loads(request.body)
-        if not j.get("token"):
-            return HttpUnprocessableEntity("Missing Token field")
-        return HttpResponse(j["token"])
+        request_token = json.loads(request.body).get("token")
+        if not request_token:
+            return JsonResponse({"error": "Missing token field"}, status=422)
+
+        try:
+            user = Token.objects.get(token=request_token).friend
+        except ObjectDoesNotExist:
+            return JsonResponse({"error": "Invalid token"}, status=403)
+
+        return JsonResponse({})
