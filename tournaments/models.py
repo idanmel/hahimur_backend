@@ -49,3 +49,16 @@ class Token(models.Model):
 
     def __str__(self):
         return f"{self.friend}: {self.token}"
+
+
+class Prediction(models.Model):
+    match = models.ForeignKey(Match, on_delete=models.CASCADE)
+    friend = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    home_goals = models.IntegerField(null=True)
+    away_goals = models.IntegerField(null=True)
+
+    def __str__(self):
+        return (
+            f"{self.friend}, {self.match.phase}, "
+            f"Home: {self.match.home_team} {self.home_goals} - Away: {self.match.away_team} {self.away_goals}. "
+        )

@@ -11,4 +11,9 @@ urlpatterns = [
         name="matches",
     ),
     path("tournaments/login", views.LoginView.as_view(), name="login"),
+    path(
+        "tournaments/<int:tournament_id>/predictions",
+        views.PredictionsView.as_view(),
+        name="predictions",
+    ),
 ]

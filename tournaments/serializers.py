@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Match, Phase, Team, Tournament
+from .models import Match, Phase, Prediction, Team, Tournament
 
 
 class TournamentSerializer(serializers.ModelSerializer):
@@ -29,3 +29,15 @@ class MatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = Match
         fields = ["id", "home_team", "away_team", "phase", "date"]
+
+
+class PredictionSerializer(serializers.ModelSerializer):
+    match = MatchSerializer(many=False, read_only=True)
+
+    class Meta:
+        model = Prediction
+        fields = [
+            "match",
+            "home_goals",
+            "away_goals",
+        ]

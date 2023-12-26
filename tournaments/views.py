@@ -7,8 +7,8 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Match, Token, Tournament
-from .serializers import MatchSerializer, TournamentSerializer
+from .models import Match, Prediction, Token, Tournament
+from .serializers import MatchSerializer, PredictionSerializer, TournamentSerializer
 
 
 class HttpUnprocessableEntity(HttpResponse):
@@ -35,13 +35,29 @@ class LoginView(View):
         return super().dispatch(*args, **kwargs)
 
     def post(self, request):
-        request_token = json.loads(request.body).get("token")
-        if not request_token:
+        token = json.loads(request.body).get("token")
+        if not token:
             return JsonResponse({"error": "Missing token field"}, status=422)
 
         try:
-            user = Token.objects.get(token=request_token).friend
+            user = Token.objects.get(token=token).friend
         except ObjectDoesNotExist:
             return JsonResponse({"error": "Invalid token"}, status=403)
 
         return JsonResponse({})
+
+
+class PredictionsView(APIView):
+    def get(self, request, tournament_id, format=None):
+        token = request.META["HTTP_TOKEN"]
+        try:
+            user = Token.objects.get(token=token).friend
+        except ObjectDoesNotExist:
+            return JsonResponse({"error": "Invalid token"}, status=403)
+
+        predictions = Prediction.objects.filter(
+            match__phase__tournament_id=tournament_id, friend_id=user.id
+        )
+
+        serializer = PredictionSerializer(predictions, many=True)
+        return Response({"data": serializer.data})

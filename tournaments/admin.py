@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Match, Phase, Team, Token, Tournament
+from .models import Match, Phase, Prediction, Team, Token, Tournament
 
 admin.site.register(
     [
@@ -9,5 +9,6 @@ admin.site.register(
         Team,
         Match,
         Token,
+        Prediction,
     ]
 )
